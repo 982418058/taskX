@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <login msg="login"/>
+    <login/>
   </div>
 </template>
 
@@ -15,3 +15,8 @@ export default {
   }
 }
 </script>
+<style>
+.home{
+height: 100%;
+}
+</style>

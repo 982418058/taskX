@@ -1,5 +1,4 @@
 <template>
-
   <div class="login-page">
     <div class="login-form">
       <div class="login-content">
@@ -57,7 +56,7 @@ export default {
 <style>
 .login-page {
     width: 330px;
-    margin: 0 auto;
+    margin: 50px auto;
     padding: 20px;
     box-shadow: 0px 0 15px #999999;
 }
