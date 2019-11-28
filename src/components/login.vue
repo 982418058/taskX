@@ -2,44 +2,61 @@
   <div class="login-page">
     <div class="login-form">
       <div class="login-content">
-        <div class="form-login-error">
-          <h3>Invalid login</h3>
-          <p>Enter <strong>demo</strong>/<strong>demo</strong> as login and password.</p>
+        <div class="form-group">
+          <div class="input-group">
+            <div class="input-group-addon">
+              <i class="fa fa-user"></i>
+            </div>
+            <input
+              type="text"
+              v-model="account"
+              placeholder="用户名"
+              clearable
+              @on-blur="verifyAccount"
+              class="form-control"
+              name="username"
+              id="username"
+              autocomplete="off"
+            />
+              <p class="error">{{accountError}}</p>
+          </div>
         </div>
-        <form method="post" role="form" id="form_login">
-          <div class="form-group">
-            <div class="input-group">
-              <div class="input-group-addon">
-                <i class="fa fa-user"></i>
-              </div>
-              <input type="text" class="form-control" name="username" id="username" placeholder="账号" autocomplete="off">
+        <div class="form-group">
+          <div class="input-group">
+            <div class="input-group-addon">
+              <i class="fa fa-key"></i>
             </div>
+            <input
+              type="password"
+              class="form-control"
+              name="password"
+              id="password"
+              placeholder="密码"
+              autocomplete="off"
+              v-model="pwd"
+              prefix="md-lock"
+              @on-blur="verifyPwd"
+              clearable
+            />
+            <p class="error">{{pwdError}}</p>
           </div>
-          <div class="form-group">
-            <div class="input-group">
-              <div class="input-group-addon">
-                <i class="fa fa-key"></i>
-              </div>
-              <input type="password" class="form-control" name="password" id="password" placeholder="密码" autocomplete="off">
-            </div>
-          </div>
-          <div class="form-group">
-            <button type="submit" class="btn btn-block btn-login">
-              <i class="fa fa-sign-in"></i>
-              登录
-            </button>
-          </div>
-          <div class="form-group">
-            <em>- or -</em>
-          </div>
-          <div class="form-group">
-            <button type="button" class="btn btn-default btn-lg btn-block facebook-button">
-              &nbsp;&nbsp;
-              <i class="fa fa-facebook"></i>
-                  微信登录
-            </button>
-          </div>
-        </form>
+        </div>
+        <div class="form-group">
+          <button class="btn btn-block btn-login" :loading="isShowLoading" type="primary" @click="submit">
+            <i class="fa fa-sign-in"></i>
+            登录
+          </button>
+        </div>
+        <div class="form-group">
+          <em>- or -</em>
+        </div>
+        <div class="form-group">
+          <button type="button" class="btn btn-default btn-lg btn-block facebook-button">
+            &nbsp;&nbsp;
+            <i class="fa fa-facebook"></i>
+            微信登录
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -48,17 +65,90 @@
 <script>
 export default {
   name: 'login',
-  props: {
-    msg: String
+  data () {
+    return {
+      account: '',
+      pwd: '',
+      accountError: '',
+      pwdError: '',
+      isShowLoading: false,
+      bg: {}
+    }
+  },
+  created () {
+    this.bg.backgroundImage =
+      'url(' +
+      require('../assets/imgs/bg0' + new Date().getDay() + '.jpg') + ')'
+  },
+  watch: {
+    $route: {
+      handler: function (route) {
+        this.redirect = route.query && route.query.redirect
+      },
+      immediate: true
+    }
+  },
+  methods: {
+    verifyAccount (e) {
+      if (this.account !== 'admin') {
+        this.accountError = '账号为admin'
+      } else {
+        this.accountError = ''
+      }
+    },
+    verifyPwd (e) {
+      if (this.pwd !== 'admin') {
+        this.pwdError = '密码为admin'
+      } else {
+        this.pwdError = ''
+      }
+    },
+    register () {
+      console.log('注册账号')
+    },
+    forgetPwd () {
+      console.log('忘记密码')
+    },
+    submit () {
+      if (this.account === 'admin' && this.pwd === 'admin') {
+        this.isShowLoading = true
+        // 登陆成功 设置用户信息
+        localStorage.setItem(
+          'userImg',
+          'https://avatars3.githubusercontent.com/u/22117876?s=460&v=4'
+        )
+        localStorage.setItem('userName', '小明')
+        // 登陆成功 假设这里是后台返回的 token
+        localStorage.setItem('token', 'i_am_token')
+        this.$router.push({ path: this.redirect || '/' })
+      } else {
+        if (this.account !== 'admin') {
+          this.accountError = '账号为admin'
+        }
+
+        if (this.pwd !== 'admin') {
+          this.pwdError = '密码为admin'
+        }
+      }
+    }
   }
 }
 </script>
+
 <style>
+ .input-group .error {
+    color: red;
+    text-align: left;
+    margin: 5px auto;
+    font-size: 12px;
+    padding-left: 30px;
+    height: 20px;
+}
 .login-page {
-    width: 330px;
-    margin: 50px auto;
-    padding: 20px;
-    box-shadow: 0px 0 15px #999999;
+  width: 330px;
+  margin: 50px auto;
+  padding: 20px;
+  box-shadow: 0px 0 15px #999999;
 }
 .login-page .login-content {
   position: relative;
@@ -172,11 +262,11 @@ export default {
   height: 100%;
   width: 1px;
   background: #a1d4f2;
-  -webkit-transform: scaleY(.56);
-  -moz-transform: scaleY(.56);
-  -o-transform: scaleY(.56);
-  -ms-transform: scaleY(.56);
-  transform: scaleY(.56);
+  -webkit-transform: scaleY(0.56);
+  -moz-transform: scaleY(0.56);
+  -o-transform: scaleY(0.56);
+  -ms-transform: scaleY(0.56);
+  transform: scaleY(0.56);
 }
 .login-page .login-form .form-group .input-group .form-control {
   color: #000;
@@ -196,7 +286,11 @@ export default {
 .login-page .login-form .form-group.lockscreen-input .lockscreen-thumb img {
   border: 5px solid #373e4a;
 }
-.login-page .login-form .form-group.lockscreen-input .lockscreen-thumb .lockscreen-progress-indicator {
+.login-page
+  .login-form
+  .form-group.lockscreen-input
+  .lockscreen-thumb
+  .lockscreen-progress-indicator {
   display: block;
   position: absolute;
   margin: 5px;
@@ -369,10 +463,10 @@ export default {
 }
 .login-page .login-progressbar div {
   width: 0%;
-  -moz-transition: 700ms all cubic-bezier(0.770, 0.000, 0.175, 1.000);
-  -o-transition: 700ms all cubic-bezier(0.770, 0.000, 0.175, 1.000);
-  -webkit-transition: 700ms all cubic-bezier(0.770, 0.000, 0.175, 1.000);
-  transition: 700ms all cubic-bezier(0.770, 0.000, 0.175, 1.000);
+  -moz-transition: 700ms all cubic-bezier(0.77, 0, 0.175, 1);
+  -o-transition: 700ms all cubic-bezier(0.77, 0, 0.175, 1);
+  -webkit-transition: 700ms all cubic-bezier(0.77, 0, 0.175, 1);
+  transition: 700ms all cubic-bezier(0.77, 0, 0.175, 1);
 }
 .login-page .login-progressbar-indicator {
   position: absolute;
@@ -457,7 +551,11 @@ export default {
   -ms-transform: translateY(0px) scale(1);
   transform: translateY(0px) scale(1);
 }
-.login-page.logging-in-lockscreen .login-form .form-group.lockscreen-input .lockscreen-thumb .lockscreen-progress-indicator {
+.login-page.logging-in-lockscreen
+  .login-form
+  .form-group.lockscreen-input
+  .lockscreen-thumb
+  .lockscreen-progress-indicator {
   -webkit-opacity: 1;
   -moz-opacity: 1;
   -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
@@ -681,9 +779,9 @@ export default {
     width: 280px;
   }
 }
-@media (max-width: 650px){
-    .login-page {
-       box-shadow:none;
-    }
+@media (max-width: 650px) {
+  .login-page {
+    box-shadow: none;
+  }
 }
 </style>
