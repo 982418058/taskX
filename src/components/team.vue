@@ -1,6 +1,71 @@
 <template>
   <div class="team">
-        <b-breadcrumb :items="items"></b-breadcrumb>
+    <b-breadcrumb :items="items"></b-breadcrumb>
+    <b-row class="content">
+      <b-col>
+        <b-input-group>
+        <b-dropdown variant="secondary" text="添加">
+          <b-dropdown-item>查询</b-dropdown-item>
+        </b-dropdown>
+        <b-form-input placeholder="名称"></b-form-input>
+        <b-input-group-append>
+          <b-button variant="outline-success">确定</b-button>
+          <b-button v-b-toggle.collapse-2>更多</b-button>
+        </b-input-group-append>
+        </b-input-group>
+      </b-col>
+    </b-row>
+    <b-collapse id="collapse-2">
+      <b-card>基础、交互、连接
+          <b-form @submit="onSubmit" @reset="onReset" v-if="show">
+            <b-form-group
+              id="input-group-1"
+              label="Email address:"
+              label-for="input-1"
+              description="We'll never share your email with anyone else."
+            >
+              <b-form-input
+                id="input-1"
+                v-model="form.email"
+                type="email"
+                required
+                placeholder="Enter email"
+              ></b-form-input>
+            </b-form-group>
+
+            <b-form-group id="input-group-2" label="Your Name:" label-for="input-2">
+              <b-form-input
+                id="input-2"
+                v-model="form.name"
+                required
+                placeholder="Enter name"
+              ></b-form-input>
+            </b-form-group>
+
+            <b-form-group id="input-group-3" label="Food:" label-for="input-3">
+              <b-form-select
+                id="input-3"
+                v-model="form.food"
+                :options="foods"
+                required
+              ></b-form-select>
+            </b-form-group>
+
+            <b-form-group id="input-group-4">
+              <b-form-checkbox-group v-model="form.checked" id="checkboxes-4">
+                <b-form-checkbox value="me">Check me out</b-form-checkbox>
+                <b-form-checkbox value="that">Check that out</b-form-checkbox>
+              </b-form-checkbox-group>
+            </b-form-group>
+
+            <b-button type="submit" variant="primary">Submit</b-button>
+            <b-button type="reset" variant="danger">Reset</b-button>
+          </b-form>
+        <b-card class="mt-3" header="Form Data Result">
+          <pre class="m-0">{{ form }}</pre>
+        </b-card>
+      </b-card>
+    </b-collapse>
     <div  class="bv-example-row">
        <b-card-group  columns>
             <b-card
@@ -51,13 +116,40 @@ export default {
           text: 'Y任务',
           id: '3'
         }
-      ]
+      ],
+      form: {
+        email: '',
+        name: '',
+        food: null,
+        checked: []
+      },
+      foods: [{ text: 'Select One', value: null }, 'Carrots', 'Beans', 'Tomatoes', 'Corn'],
+      show: true
     }
   },
   mounted () {
     this.$root.$on('bv::dropdown::show', bvEvent => {
       console.log('Dropdown is about to be shown', bvEvent)
     })
+  },
+  methods: {
+    onSubmit (evt) {
+      evt.preventDefault()
+      alert(JSON.stringify(this.form))
+    },
+    onReset (evt) {
+      evt.preventDefault()
+      // Reset our form values
+      this.form.email = ''
+      this.form.name = ''
+      this.form.food = null
+      this.form.checked = []
+      // Trick to reset/clear native browser form validation state
+      this.show = false
+      this.$nextTick(() => {
+        this.show = true
+      })
+    }
   }
 }
 
@@ -73,5 +165,8 @@ export default {
 }
 .card-img{
   opacity:0.3
+}
+.content{
+  margin: 5px 0;
 }
 </style>
