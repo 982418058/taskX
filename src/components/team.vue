@@ -7,9 +7,9 @@
         <b-dropdown variant="secondary" text="添加">
           <b-dropdown-item>查询</b-dropdown-item>
         </b-dropdown>
-        <b-form-input placeholder="名称"></b-form-input>
+        <b-form-input placeholder="模块名称" v-model="addname"></b-form-input>
         <b-input-group-append>
-          <b-button variant="outline-success">确定</b-button>
+          <b-button variant="outline-success" @click="creat">确定</b-button>
           <b-button v-b-toggle.collapse-2>更多</b-button>
         </b-input-group-append>
         </b-input-group>
@@ -17,50 +17,12 @@
     </b-row>
     <b-collapse id="collapse-2">
       <b-card>基础、交互、连接
-          <b-form @submit="onSubmit" @reset="onReset" v-if="show">
-            <b-form-group
-              id="input-group-1"
-              label="Email address:"
-              label-for="input-1"
-              description="We'll never share your email with anyone else."
-            >
-              <b-form-input
-                id="input-1"
-                v-model="form.email"
-                type="email"
-                required
-                placeholder="Enter email"
-              ></b-form-input>
-            </b-form-group>
-
-            <b-form-group id="input-group-2" label="Your Name:" label-for="input-2">
-              <b-form-input
-                id="input-2"
-                v-model="form.name"
-                required
-                placeholder="Enter name"
-              ></b-form-input>
-            </b-form-group>
-
-            <b-form-group id="input-group-3" label="Food:" label-for="input-3">
-              <b-form-select
-                id="input-3"
-                v-model="form.food"
-                :options="foods"
-                required
-              ></b-form-select>
-            </b-form-group>
-
-            <b-form-group id="input-group-4">
-              <b-form-checkbox-group v-model="form.checked" id="checkboxes-4">
-                <b-form-checkbox value="me">Check me out</b-form-checkbox>
-                <b-form-checkbox value="that">Check that out</b-form-checkbox>
-              </b-form-checkbox-group>
-            </b-form-group>
-
-            <b-button type="submit" variant="primary">Submit</b-button>
-            <b-button type="reset" variant="danger">Reset</b-button>
-          </b-form>
+          <b-form-group id="input-group-1" label="详细信息" label-for="input-1" description="输入145字以内的文字信息。" >
+            <b-form-input id="input-1" v-model="form.ininfo" type="ininfo" placeholder="输入文字..."></b-form-input>
+          </b-form-group>
+          <b-form-group id="input-group-1" label="封面" label-for="input-1" description="输入封面地址" >
+            <b-form-input id="input-1" v-model="form.img" type="img" placeholder="输入文字..."></b-form-input>
+          </b-form-group>
         <b-card class="mt-3" header="Form Data Result">
           <pre class="m-0">{{ form }}</pre>
         </b-card>
@@ -71,12 +33,12 @@
             <b-card
             overlay
             v-bind:img-src="data.img"
-            style="max-width: 20rem;margin: 5px auto;"
+            style="max-width: 20rem;margin: 5px auto; min-height: 4rem;"
             v-for="data in data"
             :key="data.id"
             >
             <b-card-text>{{data.text}}</b-card-text>
-            <b-dropdown text="" variant="link" class="m-md-2" right style="top: 0px; right: 0px;position: absolute;">
+            <b-dropdown text="" variant="link" class="m-md-2 team_drop" right>
               <b-dropdown-header id="dropdown-header-1">编辑</b-dropdown-header>
               <b-dropdown-item-button aria-describedby="dropdown-header-1">重命名</b-dropdown-item-button>
               <b-dropdown-item-button aria-describedby="dropdown-header-1">删除</b-dropdown-item-button>
@@ -95,12 +57,18 @@
 export default {
   data () {
     return {
+      addname: '',
       items: [
         {
           text: '1'
         }
       ],
       data: [
+        {
+          img: '',
+          text: 'Y任务',
+          id: '4'
+        },
         {
           img: 'https://picsum.photos/600/300/?image=23',
           text: 'X小组',
@@ -115,13 +83,16 @@ export default {
           img: 'https://picsum.photos/600/300/?image=25',
           text: 'Y任务',
           id: '3'
+        },
+        {
+          img: '',
+          text: 'Y任务',
+          id: '5'
         }
       ],
       form: {
-        email: '',
-        name: '',
-        food: null,
-        checked: []
+        ininfo: '',
+        img: ''
       },
       foods: [{ text: 'Select One', value: null }, 'Carrots', 'Beans', 'Tomatoes', 'Corn'],
       show: true
@@ -149,6 +120,13 @@ export default {
       this.$nextTick(() => {
         this.show = true
       })
+    },
+    creat () {
+      this.data.unshift({
+        img: this.form.img,
+        text: this.addname,
+        id: ''
+      })
     }
   }
 }
@@ -168,5 +146,13 @@ export default {
 }
 .content{
   margin: 5px 0;
+}
+.card-img-overlay{
+  text-align: left
+}
+.team_drop{
+  top: 6px;
+  right: 0px;
+  position: absolute !important;
 }
 </style>
