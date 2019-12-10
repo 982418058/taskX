@@ -32,13 +32,13 @@
             style="max-width: 20rem;margin: 5px auto; min-height: 5.6rem;"
             v-for="data in data"
             :key="data.id"
-            @click="onmd(data)"
+            @click="onmd(data,$event)"
             >
               <b-card-header>{{data.text}}</b-card-header>
               <b-card-text>{{data.content}}</b-card-text>
-              <b-dropdown variant="link" class="m-md-2 team_drop" right>
+              <b-dropdown variant="link" class="m-md-2 team_drop" right ref="btn">
                 <b-dropdown-header id="dropdown-header-1">编辑</b-dropdown-header>
-                <b-dropdown-item-button aria-describedby="dropdown-header-1">重命名</b-dropdown-item-button>
+                <b-dropdown-item-button aria-describedby="dropdown-header-1" v-b-modal.modal-prevent-closing>重命名</b-dropdown-item-button>
                 <b-dropdown-item-button aria-describedby="dropdown-header-1">删除</b-dropdown-item-button>
                 <b-dropdown-header id="dropdown-header-2">状态</b-dropdown-header>
                 <b-dropdown-item-button aria-describedby="dropdown-header-2">进度</b-dropdown-item-button>
@@ -47,6 +47,28 @@
               </b-dropdown>
             </b-card>
        </b-card-group>
+       <b-modal
+          id="modal-prevent-closing"
+          ref="modal"
+          title="Submit Your Name"
+          @show="resetModal"
+          @hidden="resetModal"
+          @ok="handleOk"
+        >
+          <form ref="form" @submit.stop.prevent="handleSubmit">
+            <b-form-group
+              label="Name"
+              label-for="name-input"
+              invalid-feedback="Name is required"
+            >
+              <b-form-input
+                id="name-input"
+                v-model="rename"
+                required
+              ></b-form-input>
+            </b-form-group>
+          </form>
+        </b-modal>
     </div>
   </div>
 </template>
@@ -55,7 +77,9 @@
 export default {
   data () {
     return {
+      rename: '',
       addname: '',
+      focus: '',
       items: [
         {
           text: '我的'
@@ -116,9 +140,43 @@ export default {
         content: this.form.ininfo
       })
     },
-    onmd (e) {
-      this.items.push({
-        text: e.text
+    onmd (b, e) {
+      switch (e.target.innerHTML) {
+        case '重命名': this.focus = b.id; break
+        default : {
+          this.items.push({
+            text: b.text
+          })
+        }
+      }
+    },
+    checkFormValidity () {
+      const valid = this.$refs.form.checkValidity()
+      return valid
+    },
+    resetModal () {
+      this.rename = ''
+    },
+    handleOk (bvModalEvt) {
+      // Prevent modal from closing
+      bvModalEvt.preventDefault()
+      // Trigger submit handler
+      this.handleSubmit()
+    },
+    handleSubmit () {
+      // Exit when the form isn't valid
+      if (!this.checkFormValidity()) {
+        return
+      }
+      // Hide the modal manually
+      this.$nextTick(() => {
+        this.$refs.modal.hide()
+      })
+      // 重命名
+      this.data.some((item, i) => {
+        if (item.id === this.focus) {
+          item.text = this.rename
+        }
       })
     }
   }
